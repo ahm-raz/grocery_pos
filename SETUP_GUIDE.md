@@ -6,20 +6,22 @@ This guide will help you get the POS system running on your localhost browser in
 
 ---
 
-## Method 1: Docker Setup (Recommended - Easiest)
+## Prerequisites
 
-### Prerequisites
-- Docker Desktop installed and running
-- Git (if cloning from repository)
+- Node.js 18+ installed
+- MongoDB Atlas account (recommended) or MongoDB 7.0+ installed locally
+- Two terminal windows
 
-### Step-by-Step Instructions
+---
 
-#### 1. Navigate to Project Directory
+## Step-by-Step Instructions
+
+### 1. Navigate to Project Directory
 ```bash
 cd Z:\pos
 ```
 
-#### 2. Create Backend Environment File
+### 2. Create Backend Environment File
 
 Create `backend/.env` file with this content:
 
@@ -28,7 +30,7 @@ NODE_ENV=development
 PORT=5000
 MONGODB_URI=mongodb+srv://ahmrazsal7_db_user:M063T6IXdTjU5zbu@cluster0.y9hqzxj.mongodb.net/grocery_pos?appName=Cluster0
 JWT_SECRET=my-super-secret-jwt-key-that-is-at-least-32-characters-long
-ALLOWED_ORIGINS=http://localhost:3000
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
 LOG_LEVEL=INFO
 SLOW_QUERY_THRESHOLD=1000
 ```
@@ -41,14 +43,14 @@ NODE_ENV=development
 PORT=5000
 MONGODB_URI=mongodb+srv://ahmrazsal7_db_user:M063T6IXdTjU5zbu@cluster0.y9hqzxj.mongodb.net/grocery_pos?appName=Cluster0
 JWT_SECRET=my-super-secret-jwt-key-that-is-at-least-32-characters-long
-ALLOWED_ORIGINS=http://localhost:3000
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
 LOG_LEVEL=INFO
 SLOW_QUERY_THRESHOLD=1000
 "@ | Out-File -FilePath .env -Encoding utf8
 cd ..
 ```
 
-#### 3. Create Frontend Environment File
+### 3. Create Frontend Environment File
 
 Create `frontend/.env` file with this content:
 
@@ -67,104 +69,48 @@ NODE_ENV=development
 cd ..
 ```
 
-#### 4. Start All Services
+### 4. Install Dependencies and Start Services
 
+**Backend (Terminal 1):**
 ```bash
-docker compose up -d
+cd backend
+npm install
+npm run dev
 ```
 
-This will:
-- Download MongoDB image (first time only)
-- Build backend Docker image
-- Build frontend Docker image
-- Start all three services
-
-#### 5. Wait for Services to Start
-
-Watch the logs:
+**Frontend (Terminal 2):**
 ```bash
-docker compose logs -f
+cd frontend
+npm install
+npm run dev
 ```
 
 Wait until you see:
-- ✅ MongoDB: `Waiting for connections`
 - ✅ Backend: `Server running on port 5000`
-- ✅ Frontend: Nginx started
+- ✅ Frontend: Server running on port 5173 (or port shown in terminal)
 
 **This takes about 1-2 minutes on first run.**
 
-#### 6. Create Your First User
+### 5. Create Your First User
 
 You need to create a user to login. Here's the easiest way:
 
-**Option A: Using MongoDB Shell (Docker)**
-```bash
-# Access MongoDB
-docker exec -it pos-mongodb mongosh grocery_pos
-
-# In MongoDB shell, run:
-db.users.insertOne({
-  name: "Admin User",
-  email: "admin@test.com",
-  passwordHash: "$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
-  role: "ADMIN",
-  isActive: true
-})
-```
-
-**The password hash above is for password: `admin123`**
-
-**Option B: Using Node.js Script**
-
-Create `backend/scripts/createUser.js`:
-```javascript
-import bcrypt from 'bcrypt';
-import mongoose from 'mongoose';
-import User from '../src/models/User.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const createAdmin = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://ahmrazsal7_db_user:M063T6IXdTjU5zbu@cluster0.y9hqzxj.mongodb.net/grocery_pos?appName=Cluster0');
-    
-    const passwordHash = await bcrypt.hash('admin123', 10);
-    
-    const admin = new User({
-      name: 'Admin User',
-      email: 'admin@test.com',
-      passwordHash,
-      role: 'ADMIN',
-      isActive: true
-    });
-    
-    await admin.save();
-    console.log('✅ Admin user created!');
-    console.log('Email: admin@test.com');
-    console.log('Password: admin123');
-    
-    process.exit(0);
-  } catch (error) {
-    console.error('Error:', error);
-    process.exit(1);
-  }
-};
-
-createAdmin();
-```
-
-Run it:
+**Using Node.js Script:**
 ```bash
 cd backend
 node scripts/createUser.js
 ```
 
-#### 7. Open in Browser
+This creates an admin user with:
+- Email: `admin@test.com`
+- Password: `admin123`
+- Role: `ADMIN`
+
+### 6. Open in Browser
 
 **Frontend Application:**
 ```
-http://localhost:3000
+http://localhost:5173
 ```
 
 **Backend Health Check:**
@@ -172,77 +118,12 @@ http://localhost:3000
 http://localhost:5000/api/health
 ```
 
-#### 8. Login
+### 7. Login
 
 - Email: `admin@test.com`
 - Password: `admin123`
 
 You should now see the dashboard!
-
----
-
-## Method 2: Manual Setup (Without Docker)
-
-### Prerequisites
-- Node.js 18+ installed
-- MongoDB 7.0+ installed and running
-- Two terminal windows
-
-### Step-by-Step Instructions
-
-#### 1. Start MongoDB
-
-Make sure MongoDB is running:
-```bash
-# Check if running
-mongosh
-
-# If not running, start it (Windows):
-# Usually runs as a service, or:
-mongod --dbpath "C:\data\db"
-```
-
-#### 2. Setup Backend (Terminal 1)
-
-```bash
-cd Z:\pos\backend
-
-# Install dependencies
-npm install
-
-# Create .env file (same as Docker, but use):
-# MONGODB_URI=mongodb+srv://ahmrazsal7_db_user:M063T6IXdTjU5zbu@cluster0.y9hqzxj.mongodb.net/grocery_pos?appName=Cluster0
-
-# Start backend
-npm run dev
-```
-
-Backend will start on: **http://localhost:5000**
-
-#### 3. Setup Frontend (Terminal 2)
-
-```bash
-cd Z:\pos\frontend
-
-# Install dependencies
-npm install
-
-# Create .env file:
-# VITE_API_URL=http://localhost:5000/api
-
-# Start frontend
-npm run dev
-```
-
-Frontend will start on: **http://localhost:5173** (check terminal for actual port)
-
-#### 4. Create User
-
-Use the same method as Docker (Option B - Node.js script)
-
-#### 5. Open Browser
-
-Go to the URL shown in the frontend terminal (usually http://localhost:5173)
 
 ---
 
@@ -294,7 +175,7 @@ Expected response:
 ```
 
 ### 2. Check Frontend
-Open: http://localhost:3000 (Docker) or http://localhost:5173 (Manual)
+Open: http://localhost:5173
 
 You should see the login page.
 
@@ -324,7 +205,6 @@ You should see the login page.
 1. Verify MongoDB Atlas connection string is correct in backend/.env
 2. Check your IP address is whitelisted in MongoDB Atlas Network Access
 3. For local MongoDB: Verify MongoDB is running: `mongosh`
-4. For Docker: `docker compose logs mongodb`
 
 ### Issue: "Port already in use"
 **Solution:**
@@ -332,7 +212,7 @@ You should see the login page.
    ```powershell
    netstat -ano | findstr :5000
    ```
-2. Stop that process or change port in docker-compose.yml
+2. Stop that process or change port in backend/.env
 
 ### Issue: "Login fails"
 **Solution:**
@@ -341,42 +221,32 @@ You should see the login page.
 3. Verify user `isActive: true`
 4. Check backend logs for errors
 
-### Issue: "Docker build fails"
-**Solution:**
-1. Ensure Docker Desktop is running
-2. Check disk space
-3. Try: `docker compose build --no-cache`
-
 ---
 
 ## 📊 Monitoring Services
 
-### View Logs (Docker)
-```bash
-# All services
-docker compose logs -f
+### View Logs
 
-# Specific service
-docker compose logs -f backend
-docker compose logs -f frontend
-docker compose logs -f mongodb
-```
+**Backend:**
+- Logs appear in terminal where `npm run dev` is running
+
+**Frontend:**
+- Logs appear in terminal and browser console (F12)
 
 ### Check Service Status
+
+**Backend:**
 ```bash
-docker compose ps
+# Check if running
+curl http://localhost:5000/api/health
 ```
 
-All services should show "Up" and "healthy"
+**Frontend:**
+- Open browser and check if page loads
 
 ### Stop Services
-```bash
-# Stop (keeps data)
-docker compose down
 
-# Stop and remove data
-docker compose down -v
-```
+Press `Ctrl+C` in each terminal running the services.
 
 ---
 
@@ -384,17 +254,18 @@ docker compose down -v
 
 | Service | URL | Purpose |
 |---------|-----|---------|
-| Frontend | http://localhost:3000 | Main application |
+| Frontend | http://localhost:5173 | Main application |
 | Backend API | http://localhost:5000 | REST API |
 | Health Check | http://localhost:5000/api/health | Service status |
 | Metrics | http://localhost:5000/api/health/metrics | System metrics |
-| MongoDB | localhost:27017 | Database |
+| MongoDB | MongoDB Atlas or localhost:27017 | Database |
 
 ---
 
 ## ✅ Success Checklist
 
-- [ ] All Docker containers running (or services started manually)
+- [ ] Backend server running
+- [ ] Frontend server running
 - [ ] Backend health check returns OK
 - [ ] Frontend loads in browser
 - [ ] Can login with created user
@@ -404,4 +275,3 @@ docker compose down -v
 - [ ] Checkout works
 
 Once all checked, you're ready to use the system! 🎉
-

@@ -14,18 +14,11 @@ dotenv.config({ path: join(__dirname, '..', '.env') });
 
 const createAllUsers = async () => {
   try {
-    // Use localhost for manual runs, mongodb hostname for Docker
     let mongoURI = process.env.MONGODB_URI;
     
     if (!mongoURI) {
       mongoURI = 'mongodb+srv://ahmrazsal7_db_user:M063T6IXdTjU5zbu@cluster0.y9hqzxj.mongodb.net/grocery_pos?appName=Cluster0';
       console.log('⚠️  No MONGODB_URI in .env, using default MongoDB Atlas connection');
-    }
-    
-    // If using Docker hostname but running manually, switch to Atlas
-    if (mongoURI.includes('mongodb://mongodb:') && !process.env.DOCKER_ENV) {
-      mongoURI = 'mongodb+srv://ahmrazsal7_db_user:M063T6IXdTjU5zbu@cluster0.y9hqzxj.mongodb.net/grocery_pos?appName=Cluster0';
-      console.log('⚠️  Detected Docker hostname but running manually, switching to MongoDB Atlas');
     }
     
     console.log(`Connecting to MongoDB at ${mongoURI}...`);

@@ -114,8 +114,7 @@ Expected response:
 mongosh
 
 # If not, start MongoDB service (Windows)
-# Or use Docker:
-docker run -d -p 27017:27017 --name pos-mongodb mongo:7.0
+# Or install MongoDB locally and start the service
 ```
 
 ### Port Already in Use

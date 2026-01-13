@@ -174,8 +174,9 @@ cd backend
 # Install dependencies
 npm install
 
-# Create .env file (same content as Docker option above, but use):
+# Create .env file with:
 # MONGODB_URI=mongodb://localhost:27017/grocery_pos
+# Or use MongoDB Atlas connection string
 
 # Start backend
 npm run dev
@@ -248,7 +249,7 @@ netstat -ano | findstr :5000
 netstat -ano | findstr :3000
 netstat -ano | findstr :27017
 
-# If ports are busy, stop those services or change ports in docker-compose.yml
+# If ports are busy, stop those services or change ports in .env files
 ```
 
 ### Frontend Can't Connect to Backend
@@ -260,19 +261,9 @@ netstat -ano | findstr :27017
 
 ### MongoDB Connection Issues
 
-**Docker:**
-```bash
-# Check MongoDB container
-docker compose ps
-docker compose logs mongodb
-
-# Restart MongoDB
-docker compose restart mongodb
-```
-
-**Manual:**
-- Verify MongoDB is running: `mongosh`
+- Verify MongoDB is running: `mongosh` (for local MongoDB)
 - Check connection string in backend/.env
+- For MongoDB Atlas: Verify your IP is whitelisted in Network Access
 
 ### Can't Login
 
@@ -283,20 +274,8 @@ docker compose restart mongodb
 
 ### View Logs
 
-**Docker:**
-```bash
-# All services
-docker compose logs -f
-
-# Specific service
-docker compose logs -f backend
-docker compose logs -f frontend
-docker compose logs -f mongodb
-```
-
-**Manual:**
-- Backend logs appear in terminal
-- Frontend logs appear in terminal and browser console
+- Backend logs appear in terminal where `npm run dev` is running
+- Frontend logs appear in terminal and browser console (F12)
 
 ---
 
@@ -321,16 +300,6 @@ Once everything is running:
 
 ## Stop Services
 
-**Docker:**
-```bash
-# Stop all services
-docker compose down
-
-# Stop and remove volumes (clears database)
-docker compose down -v
-```
-
-**Manual:**
 - Press `Ctrl+C` in each terminal running the services
 
 ---

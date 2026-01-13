@@ -19,9 +19,6 @@ let mongoUri = process.env.MONGODB_URI;
 if (!mongoUri) {
   // Default to MongoDB Atlas
   mongoUri = 'mongodb+srv://ahmrazsal7_db_user:M063T6IXdTjU5zbu@cluster0.y9hqzxj.mongodb.net/grocery_pos?appName=Cluster0';
-} else if (mongoUri.includes('mongodb://mongodb:') && !process.env.DOCKER_ENV) {
-  // Replace Docker hostname with Atlas if running manually
-  mongoUri = 'mongodb+srv://ahmrazsal7_db_user:M063T6IXdTjU5zbu@cluster0.y9hqzxj.mongodb.net/grocery_pos?appName=Cluster0';
 }
 
 const seedData = async () => {

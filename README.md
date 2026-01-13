@@ -248,43 +248,31 @@ For detailed instructions on manually inserting data via API or MongoDB, see:
 
 ## 🚢 Production Deployment
 
-### Backend Deployment
+For detailed deployment instructions, see **[DEPLOYMENT.md](./DEPLOYMENT.md)**
 
-1. **Install Production Dependencies**
-   ```bash
-   cd backend
-   npm ci --only=production
-   ```
+### Quick Overview
 
-2. **Configure Environment**
-   - Set `NODE_ENV=production` in `.env`
-   - Set strong `JWT_SECRET` (minimum 32 characters)
-   - Configure production `MONGODB_URI`
-   - Set restricted `ALLOWED_ORIGINS` (comma-separated)
+**Backend (Railway):**
+- Deploy to Railway with automatic builds
+- Configure environment variables in Railway dashboard
+- MongoDB Atlas connection string required
 
-3. **Start Server**
-   ```bash
-   NODE_ENV=production npm start
-   ```
+**Frontend (Vercel):**
+- Deploy to Vercel with automatic builds
+- Configure `VITE_API_URL` environment variable
+- Automatic HTTPS and CDN distribution
 
-### Frontend Deployment
+### Manual Deployment (Alternative)
 
-1. **Build for Production**
-   ```bash
-   cd frontend
-   npm ci
-   npm run build
-   ```
+**Backend:**
+1. Install dependencies: `npm ci --only=production`
+2. Set environment variables
+3. Start server: `npm start`
 
-2. **Serve Static Files**
-   - Serve the `dist/` folder with nginx, Apache, or similar static file server
-   - Configure reverse proxy to backend API if needed
-   - Set proper CORS headers
-
-3. **Verify Deployment**
-   ```bash
-   curl http://your-backend-url/api/health
-   ```
+**Frontend:**
+1. Build: `npm run build`
+2. Serve `dist/` folder with static file server
+3. Configure CORS in backend for frontend domain
 
 ## 🔍 Monitoring & Observability
 
