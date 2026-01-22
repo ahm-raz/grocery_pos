@@ -87,9 +87,9 @@ const Categories = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Categories</h1>
+    <div className="px-4 sm:px-6 py-4 sm:py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">Categories</h1>
         <Button
           variant="primary"
           onClick={() => {
@@ -115,7 +115,7 @@ const Categories = () => {
       )}
 
       {showForm && (
-        <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200/50 dark:border-gray-700/50 p-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
             {editingCategory ? 'Edit Category' : 'Add New Category'}
           </h2>
@@ -145,7 +145,7 @@ const Categories = () => {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">

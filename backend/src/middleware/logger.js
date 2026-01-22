@@ -38,6 +38,11 @@ const formatLog = (level, message, data = {}) => {
 };
 
 const logger = {
+  debug: (message, data) => {
+    if (shouldLog('DEBUG')) {
+      console.log(formatLog('DEBUG', message, data));
+    }
+  },
   info: (message, data) => {
     if (shouldLog('INFO')) {
       console.log(formatLog(logLevels.INFO, message, data));

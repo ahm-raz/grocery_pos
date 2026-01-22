@@ -3,6 +3,7 @@ import cors from 'cors';
 import compression from 'compression';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import connectDB from './config/database.js';
 import validateEnv from './config/envValidation.js';
 import requestId from './middleware/requestId.js';
@@ -35,6 +36,7 @@ try {
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+let server;
 
 // Trust proxy for accurate IP addresses (important for rate limiting)
 app.set('trust proxy', 1);
@@ -86,22 +88,51 @@ app.use('/api/audit-logs', apiRateLimiter, auditRoutes);
 // Global error handler (must be last)
 app.use(errorHandler);
 
-// Connect to MongoDB
-connectDB();
+// Graceful shutdown handler
+const gracefulShutdown = async (signal) => {
+  console.log(`${signal} signal received: closing HTTP server`);
+  
+  if (server) {
+    server.close(async () => {
+      console.log('HTTP server closed');
+      
+      // Close MongoDB connection
+      try {
+        await mongoose.connection.close();
+        console.log('MongoDB connection closed');
+      } catch (error) {
+        console.error('Error closing MongoDB connection:', error);
+      }
+      
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+};
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+// Register shutdown handlers
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Promise Rejection:', err);
+  gracefulShutdown('unhandledRejection');
 });
 
-// Graceful shutdown handling
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  process.exit(0);
-});
-
-process.on('SIGINT', () => {
-  console.log('SIGINT signal received: closing HTTP server');
-  process.exit(0);
-});
+// Connect to MongoDB and start server
+(async () => {
+  try {
+    await connectDB();
+    
+    // Start server only after database connection is established
+    server = app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+})();
 

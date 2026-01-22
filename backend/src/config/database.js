@@ -36,12 +36,7 @@ const connectDB = async () => {
       console.warn('MongoDB disconnected');
     });
 
-    // Graceful shutdown
-    process.on('SIGINT', async () => {
-      await mongoose.connection.close();
-      console.log('MongoDB connection closed through app termination');
-      process.exit(0);
-    });
+    // Note: Graceful shutdown is handled in server.js to avoid duplicate handlers
 
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
@@ -51,32 +46,36 @@ const connectDB = async () => {
 
 /**
  * Create database indexes (idempotent - safe to run multiple times)
+ * This ensures indexes are created early and can verify their existence
  */
 const createIndexes = async () => {
   try {
-    const collections = [
-      'users',
-      'products',
-      'inventory',
-      'orders',
-      'carts',
-      'inventorytransactions',
-      'auditlogs',
-      'stores',
-      'categories',
-      'purchaseorders'
-    ];
-
     console.log('Creating database indexes...');
     
-    // Indexes are already defined in models, but we can verify they exist
-    // Mongoose will create them automatically on first use
-    // This is just a placeholder for any custom indexes we might need
+    // Sync all model indexes - Mongoose will create indexes defined in schemas
+    // This ensures indexes exist before the application starts handling requests
+    await Promise.all([
+      mongoose.model('User').syncIndexes(),
+      mongoose.model('Store').syncIndexes(),
+      mongoose.model('Category').syncIndexes(),
+      mongoose.model('Product').syncIndexes(),
+      mongoose.model('Inventory').syncIndexes(),
+      mongoose.model('Cart').syncIndexes(),
+      mongoose.model('Order').syncIndexes(),
+      mongoose.model('InventoryTransaction').syncIndexes(),
+      mongoose.model('PurchaseOrder').syncIndexes(),
+      mongoose.model('AuditLog').syncIndexes()
+    ]).catch((err) => {
+      // If models aren't loaded yet, that's okay - they'll create indexes on first use
+      if (err.name !== 'MissingSchemaError') {
+        throw err;
+      }
+    });
     
     console.log('✓ Database indexes ready');
   } catch (error) {
     console.error('Error creating indexes:', error);
-    // Don't fail startup if index creation fails - they'll be created on first use
+    // Don't fail startup if index creation fails - indexes will be created on first use
   }
 };
 

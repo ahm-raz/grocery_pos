@@ -42,19 +42,24 @@ const errorHandler = (err, req, res, next) => {
     code = 'TRANSACTION_ERROR';
   }
 
-  // Log critical errors to audit log
+  // Log critical errors to audit log (non-blocking)
   if (statusCode >= 500) {
-    logAudit({
-      user: req.user?._id,
-      role: req.user?.role,
-      store: req.userStoreId,
-      action: 'SYSTEM_ERROR',
-      entityType: 'SYSTEM',
-      ipAddress: req.ip || req.headers['x-forwarded-for'],
-      userAgent: req.headers['user-agent'],
-      severity: 'HIGH',
-      message: `Error: ${message} (${code})`
-    });
+    try {
+      logAudit({
+        user: req.user?._id,
+        role: req.user?.role,
+        store: req.userStoreId,
+        action: 'SYSTEM_ERROR',
+        entityType: 'SYSTEM',
+        ipAddress: req.ip || req.headers['x-forwarded-for'],
+        userAgent: req.headers['user-agent'],
+        severity: 'HIGH',
+        message: `Error: ${message} (${code})`
+      });
+    } catch (auditError) {
+      // Don't fail error handling if audit logging fails
+      console.error('Failed to log audit entry:', auditError);
+    }
   }
 
   // Prepare error response

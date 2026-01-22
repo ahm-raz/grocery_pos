@@ -1,13 +1,31 @@
 import os from 'os';
+import mongoose from 'mongoose';
 
 const healthCheck = async (req, res) => {
   try {
-    res.status(200).json({
-      status: 'OK',
+    // Check database connection status
+    const dbStatus = mongoose.connection.readyState;
+    const dbStates = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting'
+    };
+    
+    const isHealthy = dbStatus === 1; // 1 = connected
+    
+    const health = {
+      status: isHealthy ? 'OK' : 'UNHEALTHY',
       timestamp: new Date().toISOString(),
       service: 'Grocery POS API',
-      version: '1.0.0'
-    });
+      version: '1.0.0',
+      database: {
+        status: dbStates[dbStatus] || 'unknown',
+        connected: isHealthy
+      }
+    };
+
+    res.status(isHealthy ? 200 : 503).json(health);
   } catch (error) {
     res.status(500).json({
       status: 'ERROR',
