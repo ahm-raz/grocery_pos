@@ -1,5 +1,14 @@
 import rateLimit from 'express-rate-limit';
 
+// Helper function to check if IP is localhost
+const isLocalhost = (ip) => {
+  return ip === '::1' || 
+         ip === '127.0.0.1' || 
+         ip === '::ffff:127.0.0.1' ||
+         ip.startsWith('127.') ||
+         ip === 'localhost';
+};
+
 // Rate limit for authentication endpoints (strict)
 export const authRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -9,7 +18,7 @@ export const authRateLimiter = rateLimit({
   legacyHeaders: false,
   skip: (req) => {
     // Skip rate limiting for localhost in development
-    return process.env.NODE_ENV === 'development' && req.ip === '::1';
+    return process.env.NODE_ENV === 'development' && isLocalhost(req.ip);
   },
   handler: (req, res) => {
     res.status(429).json({

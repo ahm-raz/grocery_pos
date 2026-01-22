@@ -323,22 +323,24 @@ const POS = () => {
 
   return (
     <LazyMotion features={loadFeatures} strict>
-      <div className="px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Product Selection</h1>
+      <div className="px-4 sm:px-6 py-4 sm:py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  Product Selection
+                </h1>
                 {user?.role === ROLES.ADMIN && (
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Store:</label>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Store:</label>
                     <select
                       value={selectedStoreId || ''}
                       onChange={(e) => {
                         setSelectedStoreId(e.target.value);
                         setCart({ items: [], subtotal: 0 }); // Clear cart when store changes
                       }}
-                      className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm"
+                      className="flex-1 sm:flex-none px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm"
                     >
                       <option value="">Select a store</option>
                       {stores.map((store) => (
@@ -350,8 +352,8 @@ const POS = () => {
                   </div>
                 )}
               </div>
-              <form onSubmit={handleSearch} className="mb-4">
-                <div className="flex gap-2">
+              <form onSubmit={handleSearch} className="mb-4 sm:mb-6">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input
                     ref={searchInputRef}
                     placeholder="Search by SKU, barcode, or name..."
@@ -359,47 +361,50 @@ const POS = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="flex-1"
                   />
-                  <Button type="submit" disabled={processing}>
-                    Search
-                  </Button>
-                  {searchQuery && (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => {
-                        setSearchQuery('');
-                        setError('');
-                        setSuccess('');
-                        setIsSearching(false);
-                        loadData();
-                      }}
-                      disabled={processing}
-                    >
-                      Clear
+                  <div className="flex gap-2">
+                    <Button type="submit" disabled={processing} className="flex-1 sm:flex-none">
+                      Search
                     </Button>
-                  )}
+                    {searchQuery && (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setError('');
+                          setSuccess('');
+                          setIsSearching(false);
+                          loadData();
+                        }}
+                        disabled={processing}
+                        className="flex-1 sm:flex-none"
+                      >
+                        Clear
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </form>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 max-h-[500px] sm:max-h-[600px] overflow-y-auto pr-2">
                 {filteredProducts.length > 0 ? (
                   filteredProducts.map((product) => (
                     <m.button
                       key={product.productId}
                       onClick={() => handleAddToCart(product)}
                       disabled={processing || product.isOutOfStock}
-                      className="p-4 border dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-left disabled:opacity-50 dark:bg-gray-800"
+                      className="p-3 sm:p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50 dark:hover:from-gray-700 dark:hover:to-gray-600 text-left disabled:opacity-50 dark:bg-gray-800 transition-all duration-200 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600"
                       whileHover={!processing && !product.isOutOfStock ? { scale: 1.02 } : {}}
                       whileTap={!processing && !product.isOutOfStock ? { scale: 0.98 } : {}}
                       transition={{ duration: 0.1 }}
                     >
-                      <div className="font-semibold text-sm dark:text-white">{product.name}</div>
+                      <div className="font-semibold text-xs sm:text-sm dark:text-white line-clamp-2">{product.name}</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">SKU: {product.sku}</div>
-                      <div className="text-lg font-bold mt-2 dark:text-white">{formatCurrency(product.price || 0)}</div>
+                      <div className="text-base sm:text-lg font-bold mt-2 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">{formatCurrency(product.price || 0)}</div>
                       {product.isLowStock && (
-                        <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">Low Stock</div>
+                        <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-1 font-medium">⚠ Low Stock</div>
                       )}
                       {product.isOutOfStock && (
-                        <div className="text-xs text-red-600 dark:text-red-400 mt-1">Out of Stock</div>
+                        <div className="text-xs text-red-600 dark:text-red-400 mt-1 font-medium">✕ Out of Stock</div>
                       )}
                     </m.button>
                   ))
@@ -412,54 +417,55 @@ const POS = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 sticky top-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Cart</h2>
+          <div className="lg:col-span-1 order-1 lg:order-2">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50 sticky top-4 lg:top-20">
+              <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-4 sm:mb-6">Cart</h2>
               {error && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-3 py-2 rounded mb-4 text-sm">
+                <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-400 px-3 py-2 rounded-lg mb-4 text-xs sm:text-sm animate-slide-down">
                   {error}
                 </div>
               )}
               {success && (
-                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-3 py-2 rounded mb-4 text-sm">
+                <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 text-green-700 dark:text-green-400 px-3 py-2 rounded-lg mb-4 text-xs sm:text-sm animate-slide-down">
                   {success}
                 </div>
               )}
-              <div className="space-y-2 mb-4 max-h-[400px] overflow-y-auto">
+              <div className="space-y-2 mb-4 max-h-[300px] sm:max-h-[400px] overflow-y-auto pr-2">
                 {cart && cart.items && cart.items.length > 0 ? (
                   cart.items.map((item) => {
                     const productId = item.product?._id || item.product;
                     if (!productId) return null;
                     return (
-                      <div key={productId} className="flex items-center justify-between p-2 border dark:border-gray-700 rounded dark:bg-gray-700">
-                        <div className="flex-1">
-                          <div className="font-medium text-sm dark:text-white">
+                      <div key={productId} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg dark:bg-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-xs sm:text-sm dark:text-white truncate">
                             {item.product?.name || 'Unknown Product'}
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
                             {formatCurrency(item.unitPrice || 0)} × {item.quantity || 0}
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 sm:gap-2 ml-2">
                           <button
                             onClick={() => handleUpdateQuantity(productId, (item.quantity || 1) - 1)}
                             disabled={processing}
-                            className="px-2 py-1 bg-gray-200 dark:bg-gray-600 dark:text-white rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50"
+                            className="px-2 py-1 bg-gray-200 dark:bg-gray-600 dark:text-white rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50 transition-colors font-semibold"
                           >
-                            -
+                            −
                           </button>
-                          <span className="w-8 text-center text-sm dark:text-white">{item.quantity || 0}</span>
+                          <span className="w-6 sm:w-8 text-center text-xs sm:text-sm dark:text-white font-semibold">{item.quantity || 0}</span>
                           <button
                             onClick={() => handleUpdateQuantity(productId, (item.quantity || 0) + 1)}
                             disabled={processing}
-                            className="px-2 py-1 bg-gray-200 dark:bg-gray-600 dark:text-white rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50"
+                            className="px-2 py-1 bg-gray-200 dark:bg-gray-600 dark:text-white rounded-lg text-sm hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50 transition-colors font-semibold"
                           >
                             +
                           </button>
                           <button
                             onClick={() => handleRemoveItem(productId)}
                             disabled={processing}
-                            className="ml-2 text-red-600 dark:text-red-400 text-sm hover:text-red-800 dark:hover:text-red-300 disabled:opacity-50"
+                            className="ml-1 text-red-600 dark:text-red-400 text-base sm:text-lg hover:text-red-800 dark:hover:text-red-300 disabled:opacity-50 transition-colors font-bold"
+                            aria-label="Remove item"
                           >
                             ×
                           </button>
@@ -471,18 +477,28 @@ const POS = () => {
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">Cart is empty</p>
                 )}
               </div>
-              <div className="border-t dark:border-gray-700 pt-4">
-                <div className="flex justify-between text-lg font-bold mb-4 dark:text-white">
-                  <span>Total:</span>
-                  <span>{formatCurrency(cart?.subtotal || 0)}</span>
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <span className="text-base sm:text-lg font-semibold text-gray-700 dark:text-gray-300">Total:</span>
+                  <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">{formatCurrency(cart?.subtotal || 0)}</span>
                 </div>
                 <Button
                   variant="success"
                   onClick={handleCheckoutClick}
                   disabled={processing || !cart || !cart.items || cart.items.length === 0}
-                  className="w-full"
+                  className="w-full text-base sm:text-lg py-3 font-semibold"
                 >
-                  {processing ? 'Processing...' : 'Checkout'}
+                  {processing ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </span>
+                  ) : (
+                    'Checkout'
+                  )}
                 </Button>
               </div>
             </div>

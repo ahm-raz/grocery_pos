@@ -45,7 +45,7 @@ const productSchema = new mongoose.Schema({
 
 // Indexes for fast lookups in micro-fulfillment operations
 productSchema.index({ sku: 1 });
-productSchema.index({ barcode: 1 });
+productSchema.index({ barcode: 1 }, { sparse: true }); // Sparse index for optional barcode
 productSchema.index({ category: 1 });
 
 const Product = mongoose.model('Product', productSchema);

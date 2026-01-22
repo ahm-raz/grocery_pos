@@ -193,20 +193,22 @@ const Inventory = () => {
   );
 
   return (
-    <div className="px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Inventory</h1>
-        <div className="flex gap-2 items-center">
+    <div className="px-4 sm:px-6 py-4 sm:py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+          Inventory
+        </h1>
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full sm:w-auto">
           {user?.role === ROLES.ADMIN && (
-            <div className="flex items-center gap-2 mr-4">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Store:</label>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Store:</label>
               <select
                 value={selectedStoreId || ''}
                 onChange={(e) => {
                   setSelectedStoreId(e.target.value);
                   setInventory([]); // Clear inventory when store changes
                 }}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm"
+                className="flex-1 sm:flex-none px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-sm"
               >
                 <option value="">Select a store</option>
                 {stores.map((store) => (
@@ -221,6 +223,7 @@ const Inventory = () => {
             <Button
               variant="secondary"
               onClick={() => setShowCreateInventoryForm(true)}
+              className="w-full sm:w-auto"
             >
               + Create Inventory Entry
             </Button>
@@ -241,8 +244,8 @@ const Inventory = () => {
       )}
 
       {showCreateInventoryForm && (
-        <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-soft p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
             Create Inventory Entry
           </h2>
           <form onSubmit={handleCreateInventory} className="space-y-4">
@@ -283,8 +286,8 @@ const Inventory = () => {
       )}
 
       {showStockForm && selectedProduct && (
-        <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-soft p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
             Adjust Stock: {selectedProduct.product?.name || 'Unknown'}
           </h2>
           <form onSubmit={handleStockAdjustment} className="space-y-4">
@@ -358,27 +361,27 @@ const Inventory = () => {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft overflow-hidden border border-gray-200/50 dark:border-gray-700/50">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Product
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Quantity
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Low Stock Threshold
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Batches
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -394,17 +397,20 @@ const Inventory = () => {
                 inventory.map((item) => {
                   const totalQuantity = item.quantity || item.batches?.reduce((sum, batch) => sum + batch.quantity, 0) || 0;
                   return (
-                    <tr key={item._id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                      <td className="px-3 sm:px-6 py-4">
+                        <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
                           {item.product?.name || 'Unknown'}
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">{item.product?.sku}</div>
+                        <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{item.product?.sku}</div>
+                        <div className="md:hidden text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          Threshold: {item.lowStockThreshold}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
                         {totalQuantity}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                         {item.lowStockThreshold}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -422,7 +428,7 @@ const Inventory = () => {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="hidden lg:table-cell px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                         {item.batches?.length || 0} batch(es)
                         {item.batches && item.batches.length > 0 && (
                           <div className="text-xs mt-1">
@@ -436,10 +442,10 @@ const Inventory = () => {
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
                           onClick={() => openStockForm(item)}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 transition-colors text-xs sm:text-sm"
                         >
                           Adjust Stock
                         </button>

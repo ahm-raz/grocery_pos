@@ -34,11 +34,11 @@ const Reports = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="px-4 py-6">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Reports</h1>
+    <div className="px-4 sm:px-6 py-4 sm:py-6">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6 sm:mb-8">Reports</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Sales Summary</h2>
           {sales?.summary && (
             <div className="space-y-2 mb-4">
@@ -74,7 +74,7 @@ const Reports = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Inventory Summary</h2>
           {inventory?.summary && (
             <div className="space-y-2 mb-4">
